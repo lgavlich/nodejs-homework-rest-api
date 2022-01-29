@@ -21,28 +21,19 @@ router.get("/", async (req, res, next) => {
     res.json(result);
   } catch (error) {
     next(error);
-    // res.status(500).json({
-    // message: "ERROR",
-    //});
   }
 });
 
 router.get("/:contactId", async (req, res, next) => {
   try {
-    const { contactId } = reg.params;
+    const { contactId } = req.params;
     const result = await contacts.getContactById(contactId);
     if (!result) {
       throw new createError(404, "Not found");
-      //const error = new Error("Not found");
-      //error.status = 404;
-      //throw error;
     }
     res.json(result);
   } catch (error) {
     next(error);
-    //res.status(500).json({
-    // message: "ERROR",
-    //});
   }
 });
 
