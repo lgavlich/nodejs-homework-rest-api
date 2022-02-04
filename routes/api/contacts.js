@@ -4,8 +4,8 @@ const Joi = require("joi");
 
 const contacts = require("../../models/contacts");
 const contactSchema = Joi.object({
-  name: Joi.string().require(),
-  email: Joi.string().email().require(),
+  name: Joi.string().required(),
+  email: Joi.string().email().required(),
   phone: Joi.string()
     .pattern(
       /^\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}$/
