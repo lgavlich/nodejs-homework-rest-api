@@ -3,6 +3,8 @@ const CreateError = require("http-errors");
 
 const { Contact, schemas } = require("../../models/contacts");
 
+const { authenticate } = require("../../middlewares");
+
 const router = express.Router();
 
 router.get("/", async (req, res, next) => {
@@ -30,13 +32,14 @@ router.get("/:contactId", async (req, res, next) => {
   }
 });
 
-router.post("/", async (req, res, next) => {
+router.post("/", authenticate, async (req, res, next) => {
   try {
     const { error } = schemas.add.validate(req.body);
     if (error) {
       throw new CreateError(400, error.message);
     }
-    const result = await Contact.create(req.body);
+    const data = { ...req.body, owner: req.user._id };
+    const result = await Contact.create(data);
     res.status(201).json(result);
   } catch (error) {
     if (error.message.includes("validation failed")) {

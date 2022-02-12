@@ -22,13 +22,13 @@ router.post("/register", async (req, res, next) => {
     }
     const salt = await bcrypt.genSalt(10);
     const hashPassword = await bcrypt.hash(password, salt);
-    const result = await User.create({
+    await User.create({
       email,
       password: hashPassword,
     });
     res.status(201).json({
       user: {
-        email: "example@example.com",
+        email: req.user.email,
         subscription: "starter",
       },
     });
@@ -53,12 +53,15 @@ router.post("/login", async (req, res, next) => {
     if (!compareResult) {
       throw new CreateError(401, "Email or password is wrong");
     }
+    const payload = {
+      id: user._id,
+    };
 
-    const token = "234t3ee.sdfsdfsfh.aw3235134";
+    const token = jwt.sign(payload, SECRET_KEY, { expiresIn: "1h" });
     res.json({
-      token: "exampletoken",
+      token,
       user: {
-        email: "example@example.com",
+        email: req.user.email,
         subscription: "starter",
       },
     });
@@ -66,4 +69,5 @@ router.post("/login", async (req, res, next) => {
     next(error);
   }
 });
+
 module.exports = router;
